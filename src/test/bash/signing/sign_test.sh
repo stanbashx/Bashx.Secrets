@@ -14,6 +14,29 @@ STDERR="$(mktemp)"
 
 #
 
+:> "${STDOUT}"
+:> "${STDERR}"
+"${SCRIPT}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'Wrong arguments!\n'
+
+:> "${STDOUT}"
+:> "${STDERR}"
+"${SCRIPT}" '' '' '' '' '' '' > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'Wrong arguments!\n'
+
+:> "${STDOUT}"
+:> "${STDERR}"
+"${SCRIPT}" '' '' '' '' > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'Wrong arguments!\n'
+
+#
+
 echo 'Not implemented!'; exit 1 # todo
 
 #
