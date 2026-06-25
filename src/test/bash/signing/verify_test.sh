@@ -78,6 +78,7 @@ SECRETS_ALGORITHM=''
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/equals.sh "${STDERR}" $'No key!\n'
 rm "${SECRETS_SRC}"
+rm "${SECRETS_SIGNATURE}"
 
 #
 
@@ -94,6 +95,7 @@ SECRETS_ALGORITHM=''
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/equals.sh "${STDERR}" "Algorithm \"${SECRETS_ALGORITHM}\" is not supported!"$'\n'
 rm "${SECRETS_SRC}"
+rm "${SECRETS_SIGNATURE}"
 
 #
 
