@@ -133,7 +133,9 @@ SECRETS_PASSWORD='qwe123' \
 . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"
-. $asserts/strings/eq.sh "${SCRIPT}" '512' "$(stat -c %s "${SECRETS_DST}")" # todo verify
+openssl dgst -sha256 -verify 'src/test/res/rsa4096.pub' -signature "${SECRETS_DST}" "${SECRETS_SRC}" > /dev/null
+if [[ $? -ne 0 ]]; then
+ echo "Verify \"${SECRETS_SRC}\" error!" >&2; exit 1; fi
 rm "${SECRETS_SRC}"
 rm "${SECRETS_DST}"
 
