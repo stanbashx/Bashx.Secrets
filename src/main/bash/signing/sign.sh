@@ -47,9 +47,6 @@ fi
 
 SECRETS_PASSWORD="$4"
 
-if [[ -z "${SECRETS_PASSWORD}" ]]; then
- echo 'No password!' >&2; exit 1; fi
-
 SECRETS_ALGORITHM="$5"
 
 case "${SECRETS_ALGORITHM}" in
