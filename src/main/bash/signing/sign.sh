@@ -45,6 +45,11 @@ elif [[ ! -s "${SECRETS_KEY}" ]]; then
  echo "\"${SECRETS_KEY}\" is empty!" >&2; exit 1
 fi
 
+SECRETS_PASSWORD_SRC="$4"
+
+if [[ ! "${SECRETS_PASSWORD_SRC}" =~ ^[A-Za-z_][A-Za-z0-9_]*$ || ! -v "${SECRETS_PASSWORD_SRC}" ]]; then
+ echo 'Wrong password!' >&2; exit 1; fi
+
 SECRETS_ALGORITHM="$5"
 
 case "${SECRETS_ALGORITHM}" in
@@ -52,8 +57,7 @@ case "${SECRETS_ALGORITHM}" in
  *) echo "Algorithm \"${SECRETS_ALGORITHM}\" is not supported!" >&2; exit 1;;
 esac
 
-SECRETS_PASSWORD="$4" \
- openssl dgst "${SECRETS_ALGORITHM_FLAG}" -sign "${SECRETS_KEY}" -passin 'env:SECRETS_PASSWORD' -out "${SECRETS_DST}" "${SECRETS_SRC}"
+openssl dgst "${SECRETS_ALGORITHM_FLAG}" -sign "${SECRETS_KEY}" -passin "env:${SECRETS_PASSWORD_SRC}" -out "${SECRETS_DST}" "${SECRETS_SRC}"
 
 if [[ $? -ne 0 ]]; then
  echo "Signing \"${SECRETS_SRC}\" error!" >&2; exit 1; fi
