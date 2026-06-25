@@ -37,6 +37,62 @@ STDERR="$(mktemp)"
 
 #
 
+:> "${STDOUT}"
+:> "${STDERR}"
+SECRETS_SRC=''
+SECRETS_SIGNATURE=''
+SECRETS_KEY=''
+SECRETS_ALGORITHM=''
+"${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_SIGNATURE}" "${SECRETS_KEY}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'No src!\n'
+
+#
+
+:> "${STDOUT}"
+:> "${STDERR}"
+SECRETS_SRC="$(mktemp)"
+printf '%s' 'foo' > "${SECRETS_SRC}"
+SECRETS_SIGNATURE=''
+SECRETS_KEY=''
+SECRETS_ALGORITHM=''
+"${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_SIGNATURE}" "${SECRETS_KEY}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'No signature!\n'
+rm "${SECRETS_SRC}"
+
+#
+
+:> "${STDOUT}"
+:> "${STDERR}"
+SECRETS_SRC="$(mktemp)"
+printf '%s' 'foo' > "${SECRETS_SRC}"
+SECRETS_SIGNATURE="$(mktemp)"
+printf '%s' 'bar' > "${SECRETS_SIGNATURE}"
+SECRETS_KEY=''
+SECRETS_ALGORITHM=''
+"${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_SIGNATURE}" "${SECRETS_KEY}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'No key!\n'
+rm "${SECRETS_SRC}"
+
+:> "${STDOUT}"
+:> "${STDERR}"
+SECRETS_SRC="$(mktemp)"
+printf '%s' 'foo' > "${SECRETS_SRC}"
+SECRETS_SIGNATURE="$(mktemp)"
+printf '%s' 'bar' > "${SECRETS_SIGNATURE}"
+SECRETS_KEY='src/test/res/rsa4096.pub'
+SECRETS_ALGORITHM=''
+"${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_SIGNATURE}" "${SECRETS_KEY}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" "Algorithm \"${SECRETS_ALGORITHM}\" is not supported!"$'\n'
+rm "${SECRETS_SRC}"
+
 echo 'Not implemented!'; exit 1 # todo
 
 #
