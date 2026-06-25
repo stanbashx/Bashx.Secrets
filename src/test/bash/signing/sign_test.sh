@@ -37,6 +37,34 @@ STDERR="$(mktemp)"
 
 #
 
+:> "${STDOUT}"
+:> "${STDERR}"
+SECRETS_SRC=''
+SECRETS_DST=''
+SECRETS_KEY=''
+SECRETS_PASSWORD_SRC=''
+SECRETS_ALGORITHM=''
+"${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_DST}" "${SECRETS_KEY}" "${SECRETS_PASSWORD_SRC}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'No src!\n'
+
+#
+
+:> "${STDOUT}"
+:> "${STDERR}"
+SECRETS_SRC="$(mktemp)"
+printf '%s' 'foo' > "${SECRETS_SRC}"
+SECRETS_DST=''
+SECRETS_KEY=''
+SECRETS_PASSWORD_SRC=''
+SECRETS_ALGORITHM=''
+"${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_DST}" "${SECRETS_KEY}" "${SECRETS_PASSWORD_SRC}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'No dst!\n'
+rm "${SECRETS_SRC}"
+
 echo 'Not implemented!'; exit 1 # todo
 
 #
