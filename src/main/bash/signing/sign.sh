@@ -60,7 +60,7 @@ if [[ ! "${SECRETS_PASSWORD_SRC}" =~ ^[A-Za-z_][A-Za-z0-9_]*$ || ! -v "${SECRETS
 openssl dgst "${SECRETS_ALGORITHM_FLAG}" -sign "${SECRETS_KEY}" -passin "env:${SECRETS_PASSWORD_SRC}" -out "${SECRETS_SIGNATURE}" "${SECRETS_SRC}"
 
 if [[ $? -ne 0 ]]; then
- echo "Signing \"${SECRETS_SRC}\" error!" >&2; exit 1; fi
+ echo "Sign \"${SECRETS_SRC}\" error!" >&2; exit 1; fi
 
 if [[ -L "${SECRETS_SIGNATURE}" ]]; then
  echo "\"${SECRETS_SIGNATURE}\" is a symlink!" >&2; exit 1

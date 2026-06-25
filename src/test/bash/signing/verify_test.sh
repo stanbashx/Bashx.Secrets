@@ -106,7 +106,7 @@ printf '%s' 'foo' > "${SECRETS_SRC}"
 SECRETS_SIGNATURE="$(mktemp)"
 openssl dgst -sha256 -sign 'src/test/res/rsa4096.key' -passin 'pass:qwe123' -out "${SECRETS_SIGNATURE}" "${SECRETS_SRC}"
 if [[ $? -ne 0 ]]; then
- echo "Signing \"${SECRETS_SRC}\" error!" >&2; exit 1; fi
+ echo "Sign \"${SECRETS_SRC}\" error!" >&2; exit 1; fi
 SECRETS_KEY='src/test/res/rsa4096.pub'
 SECRETS_ALGORITHM='sha256'
 "${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_SIGNATURE}" "${SECRETS_KEY}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
