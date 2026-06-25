@@ -51,9 +51,10 @@ if [[ -z "${SECRETS_PASSWORD}" ]]; then
  echo 'No password!' >&2; exit 1; fi
 
 SECRETS_ALGORITHM="$5"
+
 case "${SECRETS_ALGORITHM}" in
  'sha256') SECRETS_ALGORITHM_FLAG='-sha256';;
- *) echo "Algorithm \"${SECRETS_ALGORITHM}\" is not supported!"; exit 1;;
+ *) echo "Algorithm \"${SECRETS_ALGORITHM}\" is not supported!" >&2; exit 1;;
 esac
 
 openssl dgst "${SECRETS_ALGORITHM_FLAG}" -sign "${SECRETS_KEY}" -passin "pass:${SECRETS_PASSWORD}" -out "${SECRETS_DST}" "${SECRETS_SRC}"
