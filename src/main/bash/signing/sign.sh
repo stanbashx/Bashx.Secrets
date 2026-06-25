@@ -17,17 +17,17 @@ elif [[ ! -s "${SECRETS_SRC}" ]]; then
  echo "\"${SECRETS_SRC}\" is empty!" >&2; exit 1
 fi
 
-SECRETS_DST="$2"
+SECRETS_SIGNATURE="$2"
 
-if [[ -z "${SECRETS_DST}" ]]; then
- echo 'No dst!' >&2; exit 1
-elif [[ -L "${SECRETS_DST}" ]]; then
- echo "\"${SECRETS_DST}\" is a symlink!" >&2; exit 1
-elif [[ -e "${SECRETS_DST}" ]]; then
- if [[ -f "${SECRETS_DST}" ]]; then
-  echo "\"${SECRETS_DST}\" exists!" >&2; exit 1
+if [[ -z "${SECRETS_SIGNATURE}" ]]; then
+ echo 'No signature!' >&2; exit 1
+elif [[ -L "${SECRETS_SIGNATURE}" ]]; then
+ echo "\"${SECRETS_SIGNATURE}\" is a symlink!" >&2; exit 1
+elif [[ -e "${SECRETS_SIGNATURE}" ]]; then
+ if [[ -f "${SECRETS_SIGNATURE}" ]]; then
+  echo "\"${SECRETS_SIGNATURE}\" exists!" >&2; exit 1
  else
-  echo "\"${SECRETS_DST}\" is not a file!" >&2; exit 1
+  echo "\"${SECRETS_SIGNATURE}\" is not a file!" >&2; exit 1
  fi
 fi
 
@@ -57,17 +57,17 @@ SECRETS_PASSWORD_SRC="$5"
 if [[ ! "${SECRETS_PASSWORD_SRC}" =~ ^[A-Za-z_][A-Za-z0-9_]*$ || ! -v "${SECRETS_PASSWORD_SRC}" ]]; then
  echo 'Wrong password!' >&2; exit 1; fi
 
-openssl dgst "${SECRETS_ALGORITHM_FLAG}" -sign "${SECRETS_KEY}" -passin "env:${SECRETS_PASSWORD_SRC}" -out "${SECRETS_DST}" "${SECRETS_SRC}"
+openssl dgst "${SECRETS_ALGORITHM_FLAG}" -sign "${SECRETS_KEY}" -passin "env:${SECRETS_PASSWORD_SRC}" -out "${SECRETS_SIGNATURE}" "${SECRETS_SRC}"
 
 if [[ $? -ne 0 ]]; then
  echo "Signing \"${SECRETS_SRC}\" error!" >&2; exit 1; fi
 
-if [[ -L "${SECRETS_DST}" ]]; then
- echo "\"${SECRETS_DST}\" is a symlink!" >&2; exit 1
-elif [[ ! -e "${SECRETS_DST}" ]]; then
- echo "\"${SECRETS_DST}\" does not exist!" >&2; exit 1
-elif [[ ! -f "${SECRETS_DST}" ]]; then
- echo "\"${SECRETS_DST}\" is not a file!" >&2; exit 1
-elif [[ ! -s "${SECRETS_DST}" ]]; then
- echo "\"${SECRETS_DST}\" is empty!" >&2; exit 1
+if [[ -L "${SECRETS_SIGNATURE}" ]]; then
+ echo "\"${SECRETS_SIGNATURE}\" is a symlink!" >&2; exit 1
+elif [[ ! -e "${SECRETS_SIGNATURE}" ]]; then
+ echo "\"${SECRETS_SIGNATURE}\" does not exist!" >&2; exit 1
+elif [[ ! -f "${SECRETS_SIGNATURE}" ]]; then
+ echo "\"${SECRETS_SIGNATURE}\" is not a file!" >&2; exit 1
+elif [[ ! -s "${SECRETS_SIGNATURE}" ]]; then
+ echo "\"${SECRETS_SIGNATURE}\" is empty!" >&2; exit 1
 fi
