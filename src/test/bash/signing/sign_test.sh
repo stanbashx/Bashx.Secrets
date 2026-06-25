@@ -65,7 +65,77 @@ SECRETS_ALGORITHM=''
 . $asserts/files/equals.sh "${STDERR}" $'No dst!\n'
 rm "${SECRETS_SRC}"
 
-echo 'Not implemented!'; exit 1 # todo
+#
+
+:> "${STDOUT}"
+:> "${STDERR}"
+SECRETS_SRC="$(mktemp)"
+printf '%s' 'foo' > "${SECRETS_SRC}"
+SECRETS_DST="$(mktemp)"
+rm "${SECRETS_DST}"
+SECRETS_KEY=''
+SECRETS_PASSWORD_SRC=''
+SECRETS_ALGORITHM=''
+"${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_DST}" "${SECRETS_KEY}" "${SECRETS_PASSWORD_SRC}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'No key!\n'
+rm "${SECRETS_SRC}"
+
+#
+
+:> "${STDOUT}"
+:> "${STDERR}"
+SECRETS_SRC="$(mktemp)"
+printf '%s' 'foo' > "${SECRETS_SRC}"
+SECRETS_DST="$(mktemp)"
+rm "${SECRETS_DST}"
+SECRETS_KEY='src/test/res/rsa4096.key'
+SECRETS_PASSWORD_SRC=''
+SECRETS_ALGORITHM=''
+"${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_DST}" "${SECRETS_KEY}" "${SECRETS_PASSWORD_SRC}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'Wrong password!\n'
+rm "${SECRETS_SRC}"
+
+#
+
+:> "${STDOUT}"
+:> "${STDERR}"
+SECRETS_SRC="$(mktemp)"
+printf '%s' 'foo' > "${SECRETS_SRC}"
+SECRETS_DST="$(mktemp)"
+rm "${SECRETS_DST}"
+SECRETS_KEY='src/test/res/rsa4096.key'
+SECRETS_PASSWORD_SRC='SECRETS_PASSWORD'
+SECRETS_ALGORITHM='foo'
+SECRETS_PASSWORD='qwe123' \
+ "${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_DST}" "${SECRETS_KEY}" "${SECRETS_PASSWORD_SRC}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" "Algorithm \"${SECRETS_ALGORITHM}\" is not supported!"$'\n'
+rm "${SECRETS_SRC}"
+
+#
+
+:> "${STDOUT}"
+:> "${STDERR}"
+SECRETS_SRC="$(mktemp)"
+printf '%s' 'foo' > "${SECRETS_SRC}"
+SECRETS_DST="$(mktemp)"
+rm "${SECRETS_DST}"
+SECRETS_KEY='src/test/res/rsa4096.key'
+SECRETS_PASSWORD_SRC='SECRETS_PASSWORD'
+SECRETS_ALGORITHM='sha256'
+SECRETS_PASSWORD='qwe123' \
+ "${SCRIPT}" "${SECRETS_SRC}" "${SECRETS_DST}" "${SECRETS_KEY}" "${SECRETS_PASSWORD_SRC}" "${SECRETS_ALGORITHM}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/empty.sh "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" '512' "$(stat -c %s "${SECRETS_DST}")" # todo verify
+rm "${SECRETS_SRC}"
+rm "${SECRETS_DST}"
 
 #
 
